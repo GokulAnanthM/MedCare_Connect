@@ -71,7 +71,7 @@ export default function Login() {
               </span>
             </h1>
             <p className="mt-3 text-slate-300 max-w-sm">
-              A secure, centralized Hospital Operations Portal that enables healthcare professionals and staff to efficiently manage clinical, administrative, and operational workflows.
+              <span className="text-white font-medium">MedCare Connect</span> is a centralized digital platform that streamlines hospital operations, employee collaboration, and patient care.
             </p>
           </div>
 
