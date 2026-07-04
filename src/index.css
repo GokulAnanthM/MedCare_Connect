@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(at 8% 6%, rgba(14, 165, 233, 0.10) 0px, transparent 40%),
+    radial-gradient(at 92% 12%, rgba(168, 85, 247, 0.10) 0px, transparent 40%),
+    radial-gradient(at 40% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 45%);
+  background-attachment: fixed;
+}
+
+.card {
+  @apply bg-white rounded-2xl shadow-sm ring-1 ring-slate-200/70 border border-white p-5;
+}
+
+.card-hover {
+  @apply card transition-all hover:shadow-lg hover:-translate-y-0.5 hover:ring-brand-200;
+}
+
+.btn {
+  @apply inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors;
+}
+.btn-primary {
+  @apply btn text-white shadow-brand-glow bg-gradient-to-r from-sky-500 via-indigo-500 to-fuchsia-500 hover:brightness-110;
+}
+.btn-ghost {
+  @apply btn text-slate-700 hover:bg-slate-100;
+}
+
+.badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 bg-clip-text text-transparent;
+}
