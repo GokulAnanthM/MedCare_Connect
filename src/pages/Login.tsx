@@ -3,11 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import type { Employee } from '../lib/database.types';
-import { BrandMark } from '../components/Brand';
-import { ShieldCheck, Sparkles, Stethoscope } from 'lucide-react';
+import { BrandMarkOnDark } from '../components/Brand';
+import { Activity, Heart, Shield, Clock } from 'lucide-react';
 
-// Demo login: pick an employee that SailPoint has provisioned.
-// A production build would replace this with Supabase Auth / SSO.
 export default function Login() {
   const { signInAsDemo, employee } = useAuth();
   const nav = useNavigate();
@@ -44,94 +42,128 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-slate-950 text-white overflow-hidden">
-      {/* Left hero panel */}
-      <div className="relative hidden lg:flex flex-col justify-between p-10">
-        <div className="absolute inset-0 bg-app-mesh opacity-90" />
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-600/30 via-indigo-700/30 to-fuchsia-700/30" />
+    <div className="min-h-screen grid lg:grid-cols-2 overflow-hidden">
+      {/* ── Left panel ── */}
+      <div className="relative hidden lg:flex flex-col justify-between p-10 overflow-hidden bg-slate-950">
+        {/* Gradient mesh background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-900/60 via-indigo-900/60 to-slate-950" />
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-fuchsia-500/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        </div>
+
+        {/* Top: brand */}
         <div className="relative z-10">
-          <BrandMark size="lg" className="[&_.text-slate-800]:text-white [&_.text-slate-500]:text-slate-300" />
+          <BrandMarkOnDark size="md" />
         </div>
 
-        <div className="relative z-10 space-y-6 max-w-md">
-          <h1 className="text-4xl font-semibold leading-tight">
-            Welcome to <span className="bg-gradient-to-r from-sky-300 via-indigo-200 to-fuchsia-300 bg-clip-text text-transparent">MedCare Connect</span>
-          </h1>
-          <p className="text-slate-300">
-            The unified operations portal for MedCare Hospital. Access, entitlements, and
-            birthright roles are governed by SailPoint ISC.
-          </p>
+        {/* Centre: headline */}
+        <div className="relative z-10 space-y-8">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 ring-1 ring-white/20 text-xs text-sky-300 mb-4">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              All systems operational
+            </div>
+            <h1 className="text-4xl font-semibold leading-snug text-white">
+              Delivering care,<br />
+              <span className="bg-gradient-to-r from-sky-300 via-indigo-200 to-fuchsia-300 bg-clip-text text-transparent">
+                one record at a time.
+              </span>
+            </h1>
+            <p className="mt-3 text-slate-300 max-w-sm">
+              MedCare Connect gives every staff member the tools they need — right when they need them.
+            </p>
+          </div>
 
-          <ul className="space-y-3">
-            <Feature icon={<Stethoscope className="h-4 w-4" />} label="Clinical workflows for doctors, nurses & lab staff" />
-            <Feature icon={<ShieldCheck className="h-4 w-4" />} label="Least-privilege access enforced per entitlement" />
-            <Feature icon={<Sparkles className="h-4 w-4" />} label="Birthright access driven from HR attributes" />
-          </ul>
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-3">
+            <StatTile icon={<Heart className="h-4 w-4 text-rose-400" />} value="12,400+" label="Patients served" />
+            <StatTile icon={<Activity className="h-4 w-4 text-sky-400" />} value="340+" label="Daily appointments" />
+            <StatTile icon={<Shield className="h-4 w-4 text-emerald-400" />} value="100%" label="Secure & compliant" />
+            <StatTile icon={<Clock className="h-4 w-4 text-amber-400" />} value="24 / 7" label="Portal availability" />
+          </div>
         </div>
 
-        <div className="relative z-10 text-xs text-slate-400">
-          © MedCare Hospital · Operated on Supabase · Governed by SailPoint ISC
+        {/* Bottom: footer */}
+        <div className="relative z-10 text-xs text-slate-500">
+          © {new Date().getFullYear()} MedCare Hospital. All rights reserved.
         </div>
       </div>
 
-      {/* Right sign-in form */}
-      <div className="relative flex items-center justify-center p-6 sm:p-10 bg-white text-slate-900">
-        <form onSubmit={submit} className="w-full max-w-md space-y-5">
+      {/* ── Right panel ── */}
+      <div className="flex items-center justify-center bg-white p-6 sm:p-10">
+        <div className="w-full max-w-md space-y-6">
+          {/* Mobile brand */}
           <div className="lg:hidden">
-            <BrandMark size="md" />
+            <BrandMarkOnDark size="md" />
           </div>
 
+          {/* Heading */}
           <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Sign in</h2>
-            <p className="text-sm text-slate-500 mt-1">
-              Select an employee provisioned by SailPoint to enter the portal.
+            <h2 className="text-2xl font-semibold text-slate-900">Welcome back</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Sign in to access your MedCare workspace.
             </p>
           </div>
 
           {error && (
-            <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">
+            <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
               {error}
             </div>
           )}
 
-          <label className="block">
-            <span className="text-sm font-medium text-slate-700">Employee</span>
-            <select
-              value={selected}
-              onChange={(e) => setSelected(e.target.value)}
-              className="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
-              required
+          <form onSubmit={submit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Select your account
+              </label>
+              <select
+                value={selected}
+                onChange={(e) => setSelected(e.target.value)}
+                className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+                required
+              >
+                <option value="">Choose an account…</option>
+                {employees.map((emp) => (
+                  <option key={emp.employee_id} value={emp.employee_id}>
+                    {emp.first_name} {emp.last_name} — {emp.job_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              disabled={busy || !selected}
+              className="w-full justify-center btn-primary py-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value="">Select an employee…</option>
-              {employees.map((e) => (
-                <option key={e.employee_id} value={e.employee_id}>
-                  {e.first_name} {e.last_name} — {e.job_name} ({e.department})
-                </option>
-              ))}
-            </select>
-          </label>
+              {busy ? 'Signing in…' : 'Sign in'}
+            </button>
+          </form>
 
-          <button type="submit" className="btn-primary w-full justify-center py-2.5" disabled={busy}>
-            {busy ? 'Signing in…' : 'Enter MedCare Connect'}
-          </button>
-
-          <div className="pt-2 text-xs text-slate-500 border-t border-slate-100">
-            Demo sign-in resolves the selected employee, loads their profile, and retrieves
-            the entitlements SailPoint has assigned.
-          </div>
-        </form>
+          <p className="text-xs text-center text-slate-400">
+            Having trouble signing in? Contact{' '}
+            <a href="mailto:support@medcare.example" className="text-brand-600 hover:underline">
+              IT Support
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-function Feature({ icon, label }: { icon: JSX.Element; label: string }) {
+function StatTile({ icon, value, label }: { icon: JSX.Element; value: string; label: string }) {
   return (
-    <li className="flex items-center gap-3">
-      <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/10 ring-1 ring-white/20 text-white">
+    <div className="rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3 flex items-center gap-3">
+      <div className="h-8 w-8 rounded-lg bg-white/10 grid place-items-center">
         {icon}
-      </span>
-      <span className="text-sm text-slate-200">{label}</span>
-    </li>
+      </div>
+      <div>
+        <div className="text-sm font-semibold text-white">{value}</div>
+        <div className="text-xs text-slate-400">{label}</div>
+      </div>
+    </div>
   );
 }
+
