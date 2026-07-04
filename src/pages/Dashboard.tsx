@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { MODULES, hasAny } from '../lib/entitlements';
+import { MODULES, ENTITLEMENTS, hasAny } from '../lib/entitlements';
 import {
   LayoutDashboard, Users, CalendarDays, FileText,
   FlaskConical, Pill, Receipt, BarChart3, Bell, UserCircle2, ShieldCheck,
@@ -34,12 +36,46 @@ const MODULE_DESC: Record<string, string> = {
   my_access:       'View your assigned permissions',
 };
 
+type LiveStat = { label: string; value: number; accent: string };
+
 export default function Dashboard() {
   const { employee, entitlementIds } = useAuth();
   const visible = MODULES.filter((m) => hasAny(entitlementIds, m.requires));
   const workspaces = visible.filter((m) => m.key !== 'dashboard');
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const [stats, setStats] = useState<LiveStat[]>([]);
+
+  useEffect(() => {
+    if (!entitlementIds.size) return;
+    const today = new Date();
+    const dayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
+    const dayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
+
+    void (async () => {
+      const next: LiveStat[] = [];
+      if (entitlementIds.has(ENTITLEMENTS.PATIENT_MGMT)) {
+        const { count } = await supabase.from('patients').select('*', { count: 'exact', head: true });
+        next.push({ label: 'Total patients', value: count ?? 0, accent: 'text-emerald-600' });
+      }
+      if (entitlementIds.has(ENTITLEMENTS.APPOINTMENT_MGMT)) {
+        const { count } = await supabase.from('appointments').select('*', { count: 'exact', head: true })
+          .gte('appointment_date', dayStart).lt('appointment_date', dayEnd);
+        next.push({ label: "Today's appointments", value: count ?? 0, accent: 'text-blue-600' });
+      }
+      if (entitlementIds.has(ENTITLEMENTS.LABORATORY) || entitlementIds.has(ENTITLEMENTS.LAB_RESULTS_READ)) {
+        const { count } = await supabase.from('lab_tests').select('*', { count: 'exact', head: true }).eq('status', 'Pending');
+        next.push({ label: 'Pending lab tests', value: count ?? 0, accent: 'text-amber-600' });
+      }
+      if (entitlementIds.has(ENTITLEMENTS.BILLING)) {
+        const { count } = await supabase.from('billing').select('*', { count: 'exact', head: true }).eq('payment_status', 'Pending');
+        next.push({ label: 'Unpaid invoices', value: count ?? 0, accent: 'text-rose-600' });
+      }
+      setStats(next);
+    })();
+  }, [entitlementIds]);
+
+  const gridCols = stats.length <= 2 ? 'grid-cols-2' : stats.length === 3 ? 'grid-cols-3' : 'grid-cols-2 md:grid-cols-4';
 
   return (
     <div className="space-y-6">
@@ -65,6 +101,21 @@ export default function Dashboard() {
           </div>
         </div>
       </section>
+
+      {/* Live stats */}
+      {stats.length > 0 && (
+        <section>
+          <h2 className="text-base font-semibold text-slate-700 mb-3">Live overview</h2>
+          <div className={`grid gap-4 ${gridCols}`}>
+            {stats.map((s) => (
+              <div key={s.label} className="card">
+                <div className="text-xs text-slate-500 uppercase tracking-wide font-medium">{s.label}</div>
+                <div className={`mt-1 text-3xl font-bold ${s.accent}`}>{s.value}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Workspace tiles */}
       <section>

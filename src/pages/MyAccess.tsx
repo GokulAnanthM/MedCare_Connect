@@ -11,8 +11,8 @@ export default function MyAccess() {
           The following entitlements are currently assigned to{' '}
           <span className="font-medium text-slate-800">
             {employee?.first_name} {employee?.last_name}
-          </span>{' '}
-          by SailPoint ISC. To request changes, use the SailPoint Access Request catalog.
+          </span>
+          . To request changes, contact HR or IT support.
         </p>
         <ul className="mt-4 divide-y divide-slate-100">
           {entitlements.map((e) => (

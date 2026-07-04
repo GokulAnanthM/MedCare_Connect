@@ -27,11 +27,33 @@ export default function Notifications() {
     else setRows((r) => r.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
   }
 
+  async function markAllRead() {
+    if (!employee) return;
+    const { error } = await supabase.from('notifications')
+      .update({ is_read: true })
+      .eq('employee_id', employee.employee_id)
+      .eq('is_read', false);
+    if (error) setError(error.message);
+    else setRows((r) => r.map((n) => ({ ...n, is_read: true })));
+  }
+
+  const unread = rows.filter((n) => !n.is_read).length;
+
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-slate-900">Notifications</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-semibold text-slate-900">Notifications</h1>
+          {unread > 0 && (
+            <span className="badge bg-brand-100 text-brand-800">{unread} unread</span>
+          )}
+        </div>
+        {unread > 0 && (
+          <button onClick={markAllRead} className="btn-ghost text-sm">Mark all as read</button>
+        )}
+      </div>
       {error && (
-        <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded p-3">
+        <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">
           {error}
         </div>
       )}
